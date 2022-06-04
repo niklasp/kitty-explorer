@@ -2,7 +2,7 @@ require('dotenv').config()
 
 // import { getLastBlockScanned, setLastBlockScanned } from "../store/last_block";
 import { Consolidator, RemarkListener } from 'rmrk-tools';
-import prisma from '../lib/prisma';
+// import prisma from '../lib/prisma';
 // import {addNft, getNft, getNftIdsClaimingChild, removeOwner} from "../store/nft"
 // import { addCollection } from "../store/collection"
 // import { addBase } from "../store/base"
@@ -90,21 +90,21 @@ const readConsolidatedFileIntoMemoryAndSaveToDb = async fileName => {
         console.log(`${key}: ${ value.forsale }, ${ value.description }, ${ value.metadata }`);
 
         // @ts-ignore
-        const result = await prisma.NFT.upsert({
-          where: {
-            // @ts-ignore
-            token_id: value.id.slice(-3),
-          },
-          update: {},
-          create: {
-            // @ts-ignore
-            token_id: value.id.slice(-3),
-            // @ts-ignore
-            forsale: value.forsale,
-            // @ts-ignore
-            metadata_uri: value.metadata,
-          },
-      });
+        // const result = await prisma.NFT.upsert({
+        //   where: {
+        //     // @ts-ignore
+        //     token_id: value.id.slice(-3),
+        //   },
+        //   update: {},
+        //   create: {
+        //     // @ts-ignore
+        //     token_id: value.id.slice(-3),
+        //     // @ts-ignore
+        //     forsale: value.forsale,
+        //     // @ts-ignore
+        //     metadata_uri: value.metadata,
+        //   },
+      // });
       }
       console.log( 'total found kitties:', kittyCount );
 
