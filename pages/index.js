@@ -1,25 +1,50 @@
 import Head from 'next/head'
+import { useRouter } from 'next/router';
 import { useState } from 'react';
 import KittyGrid from '../components/kitty-grid';
 import KittyInfo from '../components/kitty-info';
 
-import { getSortedKittiesData } from '../lib/kitties'
+import { getSortedKitties } from '../lib/kitties'
+
+// import prisma from '../lib/prisma';
 
 export async function getStaticProps() {
-  const { data, forSaleCount, floorKitties } = getSortedKittiesData();
-  const allKitties = data;
+  const { data, forSaleCount, floorKitties } = await getSortedKitties();
+
   return {
     props: {
-      allKitties,
+      allKitties: data,
       forSaleCount,
       floorKitties,
       totalCount: Object.keys(data).length,
-    }
+    },
+    revalidate: 60 * 60 * 4, // In seconds = every 4 hours
   }
 }
 
-export default function Home( { allKitties, forSaleCount, totalCount, floorKitties } ) {
+export default function Home( { feed, allKitties, forSaleCount, totalCount, floorKitties } ) {
+  const { isFallback } = useRouter();
+
+  if (isFallback) {
+      return <>fallback</>;
+  }
   const [isInfoHidden, setInfoHidden] = useState(true);
+
+  allKitties.map( ( kit ) => {
+    let meta = {};
+    try {
+      meta = JSON.parse( kit.metadata )
+    } catch( e ) {
+
+    }
+
+    return {
+      ...kit,
+      metadata: meta,
+    }
+  });
+
+  // console.log( 'received from db:', feed );
 
   function handleInfoClick() {
     setInfoHidden( !isInfoHidden )
