@@ -9,7 +9,7 @@ import { getSortedKitties } from '../lib/kitties'
 // import prisma from '../lib/prisma';
 
 export async function getStaticProps() {
-  const { data, forSaleCount, floorKitties } = await getSortedKitties();
+  const { data, forSaleCount, floorKitties } = await getSortedKitties( 'id', 'desc' );
 
   return {
     props: {

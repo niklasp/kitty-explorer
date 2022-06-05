@@ -44,11 +44,11 @@ export default function KittyCard( props ) {
           data-description={ description }
           onError={ handleSrcError }
         /> :
-        <div className="kitty-image-error">image not found - try later</div>
+        <div className="kitty-image-error">ipfs error - try later</div>
       }
-      
+
       <div className="kitty-meta">
-        { forsale !== '0' ? 
+        { forsale !== '0' ?
           <a href={ `https://singular.app/collectibles/${ uuid }` } target='_blank'>Buy for <span className="kitty-price">{ forsale / 0.9 / 1000000000000 } KSM</span></a>
         :
           <a href={ `https://singular.app/collectibles/${ uuid }` } target='_blank'>View on Singular</a>
