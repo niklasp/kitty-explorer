@@ -29,20 +29,24 @@ export default function KittyCard( props ) {
       <div className="kitty-name">
         { `Kitty Paradise #${ id }` }
       </div>
-      <Image
-        key={ uuid }
-        src={ imgSrc }
-        alt={ `Kitty Paradise #${ id }` }
-        width={ 640 }
-        height={ 640 }
-        data-zoomable
-        data-album="kitties-album"
-        data-id={ uuid }
-        data-forsale={ forsale }
-        data-title={ `Kitty Paradise #${ id }` }
-        data-description={ description }
-        onError={ handleSrcError }
-      />
+      { imgSrc ? 
+        <Image
+          key={ uuid }
+          src={ imgSrc }
+          alt={ `Kitty Paradise #${ id }` }
+          width={ 640 }
+          height={ 640 }
+          data-zoomable
+          data-album="kitties-album"
+          data-id={ uuid }
+          data-forsale={ forsale }
+          data-title={ `Kitty Paradise #${ id }` }
+          data-description={ description }
+          onError={ handleSrcError }
+        /> :
+        <div className="kitty-image-error">image not found - try later</div>
+      }
+      
       <div className="kitty-meta">
         { forsale !== '0' ? 
           <a href={ `https://singular.app/collectibles/${ uuid }` } target='_blank'>Buy for <span className="kitty-price">{ forsale / 0.9 / 1000000000000 } KSM</span></a>

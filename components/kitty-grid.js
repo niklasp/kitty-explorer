@@ -29,19 +29,15 @@ export default function KittyGrid( props ) {
   return (
     <div className={ classes }>
       { props.allKitties.map( kit => {
-        if (kit.metadata.mediaUri) {
-          return <KittyCard
-            mediaUri={ kit.metadata.mediaUri }
-            id={ kit.id }
-            key={ kit.uuid }
-            uuid={ kit.uuid }
-            forsale={ kit.forsale }
-            description={ kit.metadata.description }
-            handleClick={ () => handleClick( kit.uuid ) }
-          />
-        } else {
-          return (<div key={ kit.uuid }>not found</div>);
-        }
+        return <KittyCard
+          mediaUri={ kit.metadata.mediaUri }
+          id={ kit.id }
+          key={ kit.uuid }
+          uuid={ kit.uuid }
+          forsale={ kit.forsale }
+          description={ kit.metadata.description }
+          handleClick={ () => handleClick( kit.uuid ) }
+        />
       })}
     </div>
   );

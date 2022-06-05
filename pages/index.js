@@ -18,7 +18,7 @@ export async function getStaticProps() {
       floorKitties,
       totalCount: Object.keys(data).length,
     },
-    revalidate: 60, // In seconds
+    revalidate: 60 * 60 * 4, // In seconds = every 4 hours
   }
 }
 
