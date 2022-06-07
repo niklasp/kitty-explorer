@@ -34,17 +34,16 @@ export default function Home( { allKitties, forSaleCount, totalCount, floorKitti
 
   useEffect( async () => {
     console.log( 'you changed', filter, sort );
-    let sortedKitties = await getKittiesSorted( sort.sortBy, sort.sortDir );
-    let { data: kits } = sortedKitties;
+    let sortedKitties = getKittiesSorted( allKitties, sort.sortBy, sort.sortDir );
     if ( kittyFilter === 'forsale' ) {
       console.log( 'yes you want to show the forsale only' );
-      kits = filter( kits, ( o ) => {
+      sortedKitties = filter( sortedKitties, ( o ) => {
         const x = parseInt(o.forsale) !== 0;
         console.log( 'forsalefilter', o.data );
         return x;
       } );
     }
-    setShownKitties( kits );
+    setShownKitties( sortedKitties );
   }, [ kittyFilter, sort ] )
 
   allKitties.map( ( kit ) => {
