@@ -1,3 +1,5 @@
+$font-active: #9f83ff;
+
 @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
 
 html,
@@ -14,6 +16,7 @@ body {
   font-family: 'VT323', monospace;
   background: #000;
   font-size: 18px;
+  color: #fff;
 }
 
 a {
@@ -205,9 +208,10 @@ a {
 
 .btn-about {
   position: fixed;
+  text-shadow: 2px 2px 0 #000;
   bottom: 10px;
   right: 10px;
-  font-size: 40px;
+  font-size: 35px;
   background: transparent;
   color: #fff;
   border: none;
@@ -232,22 +236,55 @@ a {
 
 .kitty-settings {
   position: fixed;
-  height: 100vh;
-  width: 25vw;
-  right: 0;
-  min-width: 300px;
-  top: 0;
-  transform: translate3d(0,0,0);
-  background: #000000aa;  /* fallback for old browsers */
+  bottom: 0;
+  left: 0;
+  z-index: 10;
+  padding: 10px;
+  font-size: 35px;
+  text-shadow: 2px 2px 0 #000;
 
-  transition: transform 0.3s;
-  padding: 10px 30px;
-  color: #fff;
-  font-size: 30px;
-  padding-top: 100px;
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: -20px;
+    left: -20px;
+    right: 0;
+    background: #000c;
+    z-index: -1;
+    filter: blur(30px);
+  }
 
-  &.hidden {
-    transform: translate3d(100%,0,0);
+  a {
+    color: #fff;
+
+    &:hover {
+      color: #ccc;
+    }
+  }
+
+  .kitty-filter,
+  .kitty-sort {
+    display: flex;
+    align-items: baseline;
+  }
+
+  .filter,
+  .sort-by {
+    padding: 0 0 0 10px;
+    cursor: pointer;
+
+    .descasc {
+      display: none;
+    }
+
+    &.active {
+      color: $font-active;
+
+      .descasc {
+        display: inline;
+      }
+    }
   }
 }
 

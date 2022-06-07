@@ -1,15 +1,16 @@
 import Head from 'next/head'
-import { useRouter } from 'next/router';
-import { useState } from 'react';
+import { filter } from "lodash";
+import { useState, useEffect } from 'react';
 import KittyGrid from '../components/kitty-grid';
 import KittyInfo from '../components/kitty-info';
+import KittySettings from '../components/kitty-settings';
 
-import { getSortedKitties } from '../lib/kitties'
+import { getKitties, getKittiesSorted } from '../lib/kitties'
 
 // import prisma from '../lib/prisma';
 
 export async function getStaticProps() {
-  const { data, forSaleCount, floorKitties } = await getSortedKitties( 'id', 'desc' );
+  const { data, forSaleCount, floorKitties } = await getKitties();
 
   return {
     props: {
@@ -22,13 +23,29 @@ export async function getStaticProps() {
   }
 }
 
-export default function Home( { feed, allKitties, forSaleCount, totalCount, floorKitties } ) {
-  const { isFallback } = useRouter();
+export default function Home( { allKitties, forSaleCount, totalCount, floorKitties } ) {
+  const [ isInfoHidden, setInfoHidden ] = useState(true);
+  const [ shownKitties, setShownKitties ] = useState( allKitties );
+  const [ sort, setSort ] = useState( {
+    sortBy: 'id',
+    sortDir: 'desc',
+  } );
+  const [ kittyFilter, setKittyFilter ] = useState( 'all' );
 
-  if (isFallback) {
-      return <>fallback</>;
-  }
-  const [isInfoHidden, setInfoHidden] = useState(true);
+  useEffect( async () => {
+    console.log( 'you changed', filter, sort );
+    let sortedKitties = await getKittiesSorted( sort.sortBy, sort.sortDir );
+    let { data: kits } = sortedKitties;
+    if ( kittyFilter === 'forsale' ) {
+      console.log( 'yes you want to show the forsale only' );
+      kits = filter( kits, ( o ) => {
+        const x = parseInt(o.forsale) !== 0;
+        console.log( 'forsalefilter', o.data );
+        return x;
+      } );
+    }
+    setShownKitties( kits );
+  }, [ kittyFilter, sort ] )
 
   allKitties.map( ( kit ) => {
     let meta = {};
@@ -48,6 +65,14 @@ export default function Home( { feed, allKitties, forSaleCount, totalCount, floo
 
   function handleInfoClick() {
     setInfoHidden( !isInfoHidden )
+  }
+
+  const onFilterClick = value => () => {
+    setKittyFilter( value );
+  }
+
+  const onSortClick = value => () => {
+    setSort( value );
   }
 
   return (
@@ -84,10 +109,16 @@ export default function Home( { feed, allKitties, forSaleCount, totalCount, floo
       </Head>
 
       <main>
-        <KittyGrid allKitties={ allKitties } />
+        <KittyGrid allKitties={ shownKitties } />
         <button className="btn-about" onClick={ () => setInfoHidden( !isInfoHidden ) }>
           about
         </button>
+        <KittySettings
+          sort={ sort }
+          filter={ kittyFilter }
+          onFilterClick={ onFilterClick }
+          onSortClick={ onSortClick }
+        />
         <KittyInfo
           forSaleCount={ forSaleCount }
           totalCount={ totalCount }

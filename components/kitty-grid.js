@@ -24,11 +24,11 @@ export default function KittyGrid( props ) {
     'kitty-grid',
   );
 
-  // console.log( 'i haz ', props.allKitties );
+  console.log( 'i haz ', props.allKitties );
 
   return (
     <div className={ classes }>
-      { props.allKitties.map( kit => {
+      { props.allKitties && props.allKitties.length ? props.allKitties.map( kit => {
         return <KittyCard
           mediaUri={ kit.metadata.mediaUri }
           id={ kit.id }
@@ -38,7 +38,7 @@ export default function KittyGrid( props ) {
           description={ kit.metadata.description }
           handleClick={ () => handleClick( kit.uuid ) }
         />
-      })}
+      }) : <div>no kitties found</div> }
     </div>
   );
 }
