@@ -33,15 +33,9 @@ export default function Home( { allKitties, forSaleCount, totalCount, floorKitti
   const [ kittyFilter, setKittyFilter ] = useState( 'all' );
 
   useEffect( async () => {
-    console.log( 'you changed', filter, sort );
     let sortedKitties = getKittiesSorted( allKitties, sort.sortBy, sort.sortDir );
     if ( kittyFilter === 'forsale' ) {
-      console.log( 'yes you want to show the forsale only' );
-      sortedKitties = filter( sortedKitties, ( o ) => {
-        const x = parseInt(o.forsale) !== 0;
-        console.log( 'forsalefilter', o.data );
-        return x;
-      } );
+      sortedKitties = filter( sortedKitties, ( o ) => parseInt(o.forsale) !== 0 );
     }
     setShownKitties( sortedKitties );
   }, [ kittyFilter, sort ] )

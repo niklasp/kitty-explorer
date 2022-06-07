@@ -6,7 +6,6 @@ import { customLightboxGenerator } from "../lib/yamz";
 import classNames from "classnames";
 
 export default function KittyGrid( props ) {
-  // console.log( 'kittygrid props', props );
   useEffect(() => {
     const $images = [...document.querySelectorAll('[data-zoomable]')];
     yamz.setOptions({
@@ -23,8 +22,6 @@ export default function KittyGrid( props ) {
   const classes = classNames(
     'kitty-grid',
   );
-
-  console.log( 'i haz ', props.allKitties );
 
   return (
     <div className={ classes }>
