@@ -7,7 +7,19 @@ export default function KittyInfo( props ) {
       <h3>Kitty Explorer</h3>
       <p>There are currently { props.forSaleCount } / { props.totalCount } kitties listed on singular.</p>
       <p>
-
+        Floor: { props.floorKitties && props.floorKitties.price / 0.9 / 1000000000000  } KSM -
+        {
+          props.floorKitties && props.floorKitties.kitties.map( (kit, idx) =>
+            (
+              <span
+                key={ idx }
+                className="floor-kitty"
+              >
+                <a href={ `https://singular.app/collectibles/${ kit.uuid }` } target='_blank'>
+                  Kitty #{ kit.id }
+                </a>
+              </span>
+            ) ) }
       </p>
       <p>The beautiful kitties are made by Yumi <a href="https://twitter.com/YumiArtsNFT" target="_blank">@YumiArtsNFT</a></p>
       <p>Coding: <a href="https://github.com/niklasp" target="_blank">niklasp</a></p>

@@ -12,8 +12,6 @@ export default function KittyCard( props ) {
     handleClick,
   } = props;
 
-  const [imgSrc, setImgSrc] = useState( mediaUri );
-
   function handleSrcError( e ) {
     //you could handle img src error here
   }
@@ -29,10 +27,10 @@ export default function KittyCard( props ) {
       <div className="kitty-name">
         { `Kitty Paradise #${ id }` }
       </div>
-      { imgSrc ? 
+      { mediaUri ?
         <Image
           key={ uuid }
-          src={ imgSrc }
+          src={ mediaUri }
           alt={ `Kitty Paradise #${ id }` }
           width={ 640 }
           height={ 640 }
