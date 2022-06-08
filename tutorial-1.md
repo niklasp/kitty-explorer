@@ -1,15 +1,17 @@
 Kitty Part 1
 
-You are reading part 1/3 on how to create a nifty front-end for your favorite NFT collection on singular.app using the latest web frameworks with advanced caching mechanisms.
+You are reading part 1/3 on how to create a nifty front-end for your favorite NFT collection on singular.app using the latest web frameworks with advanced caching mechanisms. 
 
 # In part 1 you will learn
 
 - How to get a json dump of RMRK NFTs
 - How RMRK NFTs are stored
-- How to use react + nextjs to show that data
+- How to use react + nextjs to create a fast serverless front-end
 - How to use static site generation for fast site creation
 - How to create a nice UI / UX
 - How to host the app on vercel
+
+If you already know all that, you can skim this tutorial and wait for the second part.
 
 Part 2 will focus on the usage of an API to periodically refresh the UI with fresh data from the blockchain, adding some simple statistics (e.g. floor price) and filter + sorting. Part 3 will cover realtime updates and notifications as well as. advanced statistics (e.g. past purchases).
 
@@ -36,9 +38,10 @@ npm run dev
 The process of getting RMRK NFT data from Kusama consists of the following steps
 
 ```
-1. Query some blockchain endpoint for Remarks (RMRK Building Blocks) ->
-2. Consolidate those Remarks to get JSON data
+1. Query some blockchain rpc endpoint for Remarks (RMRK Extrinsic) ->
+2. Consolidate those Remarks to get contained JSON Data
 3. Filter that JSON data for the collection you want
+4. (listen to new blocks and start with 1.)
 ```
 
 Luckily we do not have to do all of this (right now - will do in part 3), but there is up to date downloads downloads available for step 1 and step 2, and a handy unofficial API for step3. We will now use that API to get JSON data from the collection we want to query.
@@ -239,7 +242,7 @@ For the website the idea is not only to see all the NFT artwork in overview but 
 
 There are many image zoom plugins or lightbox plugins around. Personally I tend to use [`medium-zoom`](https://github.com/francoischalifour/medium-zoom), but it has it's difficulties with absolute positioned elements the next.js `<Image>` component adds to the dom. So I found [`yet another medium zoom` (yamz)](https://github.com/birjj/yet-another-medium-zoom) which solves the task flawlessly and on top provides options for manipulating the zoomed DOM. That way we can also add some more details next to the zoomed kitty
 
-The initialization logic of yamz is locatet in a `useEffect` hook that will fire when the component is rendered.
+The initialization logic of yamz is located in a `useEffect` hook that will fire when the component is rendered.
 
 ```js
   useEffect(() => {
@@ -252,10 +255,20 @@ The initialization logic of yamz is locatet in a `useEffect` hook that will fire
   }, []);
 ```
 
-# Credits
+Basically it is creating the zoom logic for all `$images` and adding the `customLightboxGenerator` which is imported from `lib/yamz.js`. The generator is basically the one from the [github example of yamz](https://github.com/birjj/yet-another-medium-zoom/blob/master/website/js/index.ts) with some adaptions and css styles added.
+
+# Final Thoughts
+
+Thank you for reading this far. And looking forward to part 2 + 3 with more blockchain interaction.
+
+Follow me on twitter for more #dotsama related things: [@niftesty](https://twitter.com/niftesty)
+
+Or donate some SUB or KSM below this post. It will make me continue.
+
+# Credits + Learning Resources
 
 If you are new to nextjs, start at [learn nextjs](https://nextjs.org/learn/basics/create-nextjs-app).
 
-rmrk2 boilerplate by Mathew Darnell
+[rmrk2 boilerplate by Mathew Darnell](https://github.com/MatthewDarnell/rmrk2-template-boilerplate) - it is open source, you can host your own API in a docker container
 
-Yet Another Medium Zoom
+[Yet Another Medium Zoom](https://github.com/birjj/yet-another-medium-zoom)
