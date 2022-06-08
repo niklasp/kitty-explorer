@@ -1,73 +1,19 @@
 import Head from 'next/head'
-import { filter } from "lodash";
-import { useState, useEffect } from 'react';
 import KittyGrid from '../components/kitty-grid';
-import KittyInfo from '../components/kitty-info';
-import KittySettings from '../components/kitty-settings';
 
-import { getKitties, getKittiesSorted } from '../lib/kitties'
-
-// import prisma from '../lib/prisma';
+import { getKitties } from '../lib/kitties'
 
 export async function getStaticProps() {
-  const { data, forSaleCount, floorKitties } = await getKitties();
+  const { kitties } = await getKitties();
 
   return {
     props: {
-      allKitties: data,
-      forSaleCount,
-      floorKitties,
-      totalCount: Object.keys(data).length,
+      allKitties: kitties,
     },
-    revalidate: 60 * 60 * 2, // In seconds = every 2 hours
   }
 }
 
-export default function Home( { allKitties, forSaleCount, totalCount, floorKitties } ) {
-  const [ isInfoHidden, setInfoHidden ] = useState(true);
-  const [ shownKitties, setShownKitties ] = useState( allKitties );
-  const [ sort, setSort ] = useState( {
-    sortBy: 'id',
-    sortDir: 'desc',
-  } );
-  const [ kittyFilter, setKittyFilter ] = useState( 'all' );
-
-  useEffect( async () => {
-    let sortedKitties = getKittiesSorted( allKitties, sort.sortBy, sort.sortDir );
-    if ( kittyFilter === 'forsale' ) {
-      sortedKitties = filter( sortedKitties, ( o ) => parseInt(o.forsale) !== 0 );
-    }
-    setShownKitties( sortedKitties );
-  }, [ kittyFilter, sort ] )
-
-  allKitties.map( ( kit ) => {
-    let meta = {};
-    try {
-      meta = JSON.parse( kit.metadata )
-    } catch( e ) {
-
-    }
-
-    return {
-      ...kit,
-      metadata: meta,
-    }
-  });
-
-  // console.log( 'received from db:', feed );
-
-  function handleInfoClick() {
-    setInfoHidden( !isInfoHidden )
-  }
-
-  const onFilterClick = value => () => {
-    setKittyFilter( value );
-  }
-
-  const onSortClick = value => () => {
-    setSort( value );
-  }
-
+export default function Home( { allKitties } ) {
   return (
     <div className="container">
       <Head>
@@ -102,23 +48,7 @@ export default function Home( { allKitties, forSaleCount, totalCount, floorKitti
       </Head>
 
       <main>
-        <KittyGrid allKitties={ shownKitties } />
-        <button className="btn-about" onClick={ () => setInfoHidden( !isInfoHidden ) }>
-          about
-        </button>
-        <KittySettings
-          sort={ sort }
-          filter={ kittyFilter }
-          onFilterClick={ onFilterClick }
-          onSortClick={ onSortClick }
-        />
-        <KittyInfo
-          forSaleCount={ forSaleCount }
-          totalCount={ totalCount }
-          hidden={ isInfoHidden }
-          handleClick={ handleInfoClick }
-          floorKitties={ floorKitties }
-        />
+        <KittyGrid allKitties={ allKitties } />
       </main>
     </div>
   )

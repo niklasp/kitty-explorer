@@ -1,5 +1,4 @@
 import Image from 'next/image'
-import { useState } from 'react';
 import classNames from 'classnames';
 
 export default function KittyCard( props ) {

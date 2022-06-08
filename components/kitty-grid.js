@@ -1,7 +1,6 @@
 import yamz from "yet-another-medium-zoom";
 import KittyCard from "./kitty-card";
 import { useEffect } from 'react';
-import { getKittyDetail } from "../lib/kitties";
 import { customLightboxGenerator } from "../lib/yamz";
 import classNames from "classnames";
 
@@ -14,10 +13,6 @@ export default function KittyGrid( props ) {
     });
     yamz.bind($images);
   }, []);
-
-  async function handleClick( uuid ) {
-    // const detail = await getKittyDetail( uuid );
-  }
 
   const classes = classNames(
     'kitty-grid',

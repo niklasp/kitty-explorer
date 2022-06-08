@@ -23,7 +23,7 @@ a {
   color: #813fbd;
   text-decoration: none;
   cursor: pointer;
-  
+
   &:hover {
     color: #3b298d;
   }
@@ -94,46 +94,6 @@ a {
     width: 20vw;
     height: 20vw;
   }
-
-  .columns-7 .kitty-card {
-    width: 14.2857142857vw;
-    height: 14.2857142857vw;
-  }
-
-  .columns-6 .kitty-card {
-    width: 16.66666vw;
-    height: 16.66666vw;
-  }
-
-  .columns-5 .kitty-card {
-    width: 20vw;
-    height: 20vw;
-  }
-
-  .columns-4 .kitty-card {
-    width: 25vw;
-    height: 25vw;
-  }
-
-  .columns-3 .kitty-card {
-    width: 33.3333vw;
-    height: 33.3333vw;
-  }
-
-  .columns-2 .kitty-card {
-    width: 50vw;
-    height: 50vw;
-  }
-
-  .columns-1 .kitty-card {
-    width: 100vw;
-    height: 100vw;
-
-    span {
-      width: 100vw !important;
-      height: 100vw !important;
-    }
-  }
  }
 
 // Large devices (desktops, 992px and up)
@@ -156,15 +116,6 @@ a {
   }
  }
 
-// XX-Large devices (larger desktops, 1400px and up)
-// @media (min-width: 1400px) { 
-//   .kitty-card {
-//     width: 12.5vw;
-//     height: 12.5vw;
-//   }
-//  }
-
-
 .kitty-name {
   position: absolute;
   display: flex;
@@ -182,7 +133,6 @@ a {
 
 .kitty-price {
   color: #ffe865;
-  // font-size: 110%;
 }
 
 .kitty-meta {
@@ -203,119 +153,6 @@ a {
     border-radius: 20px;
     padding: 3px 10px;
     color: #fff;
-  }
-}
-
-.btn-about {
-  position: fixed;
-  text-shadow: 2px 2px 0 #000;
-  bottom: 10px;
-  right: 10px;
-  font-size: 30px;
-  background: transparent;
-  color: #fff;
-  border: none;
-  font-family: 'VT323', monospace;
-  cursor: pointer;
-  z-index: 100;
-}
-
-.btn-settings {
-  position: fixed;
-  top: 10px;
-  right: 10px;
-  font-size: 40px;
-  background: transparent;
-  color: #fff;
-  border: none;
-  font-family: 'VT323', monospace;
-  cursor: pointer;
-  z-index: 100;
-  display: none;
-}
-
-.kitty-settings {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  z-index: 10;
-  padding: 10px;
-  font-size: 30px;
-  text-shadow: 2px 2px 0 #000;
-
-  &::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    bottom: -20px;
-    left: -20px;
-    right: 0;
-    background: #000c;
-    z-index: -1;
-    filter: blur(30px);
-  }
-
-  a {
-    color: #fff;
-
-    &:hover {
-      color: #ccc;
-    }
-  }
-
-  .kitty-filter,
-  .kitty-sort {
-    display: flex;
-    align-items: baseline;
-  }
-
-  .filter,
-  .sort-by {
-    padding: 0 0 0 10px;
-    cursor: pointer;
-
-    .descasc {
-      display: none;
-    }
-
-    &.active {
-      color: $font-active;
-
-      .descasc {
-        display: inline;
-      }
-    }
-  }
-}
-
-.kitty-info {
-  &.hidden {
-    display: none;
-  }
-
-  h3 {
-    font-size: 40px;
-  }
-
-  font-size: 25px;
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  width: 100vw;
-  height: 100vh;
-  background: #000c;
-  color: #fff;
-
-  display: flex;
-  text-align: center;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-
-  .floor-kitty {
-    padding: 0 10px;
   }
 }
 
@@ -402,22 +239,4 @@ a {
   color: #000;
   text-align: center;
   margin: 20px 0;
-}
-
-.columns-settings {
-  overflow-wrap: break-word;
-
-  span {
-    display: block;
-  }
-
-  a {
-    padding: 0 10px;
-    cursor: pointer;
-    color: #fff;
-
-    &.active {
-      color: #ffe865;
-    }
-  }
 }
