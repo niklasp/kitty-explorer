@@ -46,9 +46,22 @@ export default function KittyCard( props ) {
 
       <div className="kitty-meta">
         { forsale !== '0' ?
-          <a href={ `https://singular.app/collectibles/${ uuid }` } target='_blank'>Buy for <span className="kitty-price">{ forsale / 0.9 / 1000000000000 } KSM</span></a>
+          <a
+            href={ `https://singular.app/collectibles/${ uuid }` }
+            target='_blank'
+          >
+            Buy for 
+            <span className="kitty-price">
+              { forsale / 0.9 / 1000000000000 } KSM
+            </span>
+          </a>
         :
-          <a href={ `https://singular.app/collectibles/${ uuid }` } target='_blank'>View on Singular</a>
+          <a
+            href={ `https://singular.app/collectibles/${ uuid }` }
+            target='_blank'
+          >
+            View on Singular
+          </a>
         }
       </div>
     </div>

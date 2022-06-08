@@ -157,11 +157,83 @@ export default function KittyGrid( props ) {
 ```
 It checks if `allKitties` were provided in the component props and `maps` over them to display a single `<KittyCard>` component for each `kit`, passing down the needed props.
 
-The `KittyCard` component will then render all the
+The `KittyCard` component will then render all the passed props to an nextjs `<Image>`.
+
+```js
+export default function KittyCard( props ) {
+  const {
+    id,
+    uuid,
+    mediaUri,
+    forsale,
+    description,
+    handleClick,
+  } = props;
+
+  ...
+
+  return (
+    <div className={ classes }>
+      <div className="kitty-name">
+        { `Kitty Paradise #${ id }` }
+      </div>
+      { mediaUri ?
+        <Image
+          key={ uuid }
+          src={ mediaUri }
+          alt={ `Kitty Paradise #${ id }` }
+          width={ 640 }
+          height={ 640 }
+          data-zoomable
+          data-album="kitties-album"
+          data-id={ uuid }
+          data-forsale={ forsale }
+          data-title={ `Kitty Paradise #${ id }` }
+          data-description={ description }
+          onError={ handleSrcError }
+        /> :
+        <div className="kitty-image-error">ipfs error - try later</div>
+      }
+      <div className="kitty-meta">
+        { forsale !== '0' ?
+          <a
+            href={ `https://singular.app/collectibles/${ uuid }` }
+            target='_blank'
+          >
+            Buy for 
+            <span className="kitty-price">
+              { forsale / 0.9 / 1000000000000 } KSM
+            </span>
+          </a>
+        :
+          <a
+            href={ `https://singular.app/collectibles/${ uuid }` }
+            target='_blank'
+          >
+            View on Singular
+          </a>
+        }
+      </div>
+    </div>
+  )
+}
+```
+It seems a lot of code, but it is basically the [next.js `<Image>`](https://nextjs.org/docs/basic-features/image-optimization#remote-images) component. It is an optimized `<img>` with lazy loading and other performance optimizations applied.
+
+Also note the `data-` attributes. They are needed for the zoom-plugin you will learn about in the next chapter. The `kitty-name` and `kitty-meta` divs are hidden by default and only shown on hover. 
+
+In `kitty-meta`, you see a condition that checks if `forsale !== '0'`. Remeber the data from the json dump? There is no boolean attribute we could use as a value but rather the `forsale` attribute has the value `0` when an NFT is not for sale. Second caveat, the `forsale` attribute does not store the price you can purchase the NFT for, but rather the price, the seller will get. The difference is the creator royalities, that means, if it is for sale, the price can be calculated with
+```
+price = forsale / ( 1 - royalities for the collection in % ) / 1000000000000
+```
+So, in both cases - for sale and not for sale - we add a link to singular. But in case it is for sale, also the price one has to pay is displayed.
+
+## Adding Style
+
 
 Now all we have to do is to add the required css. For simplicity all styles are globally added in `styles/app.scss` which is included into all pages via the [`pages/_app.js`](https://nextjs.org/learn/basics/assets-metadata-css/global-styles) file. We leave it as a challenge to the readers to use [`Layout Components`](https://nextjs.org/learn/basics/assets-metadata-css/layout-component) or any other style option available to react.
 
-# Adding the Zoom UX
+# The Zoom UX
 
 For the website the idea is not only to see all the NFT artwork in overview but also to focus on one, and to zoom it in and see it larger.
 
