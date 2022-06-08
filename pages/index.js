@@ -18,12 +18,13 @@ export async function getStaticProps() {
       forSaleCount,
       floorKitties,
       totalCount: Object.keys(data).length,
+      timestamp: Date.now(),
     },
     revalidate: 60 * 60 * 2, // In seconds = every 2 hours
   }
 }
 
-export default function Home( { allKitties, forSaleCount, totalCount, floorKitties } ) {
+export default function Home( { allKitties, forSaleCount, totalCount, floorKitties, timestamp } ) {
   const [ isInfoHidden, setInfoHidden ] = useState(true);
   const [ shownKitties, setShownKitties ] = useState( allKitties );
   const [ sort, setSort ] = useState( {
@@ -118,6 +119,7 @@ export default function Home( { allKitties, forSaleCount, totalCount, floorKitti
           hidden={ isInfoHidden }
           handleClick={ handleInfoClick }
           floorKitties={ floorKitties }
+          timestamp={ timestamp }
         />
       </main>
     </div>
