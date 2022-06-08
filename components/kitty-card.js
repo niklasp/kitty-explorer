@@ -1,6 +1,7 @@
 import Image from 'next/image'
 import { useState } from 'react';
 import classNames from 'classnames';
+import kittyError from '../public/images/kitty-error.png';
 
 export default function KittyCard( props ) {
   const {
@@ -12,8 +13,11 @@ export default function KittyCard( props ) {
     handleClick,
   } = props;
 
+  const [ imgSrc, setImgSrc ] = useState( mediaUri );
+
   function handleSrcError( e ) {
-    //you could handle img src error here
+    console.log( 'handle src error' );
+    setImgSrc( kittyError );
   }
 
   const classes = classNames(
@@ -27,10 +31,9 @@ export default function KittyCard( props ) {
       <div className="kitty-name">
         { `Kitty Paradise #${ id }` }
       </div>
-      { mediaUri ?
-        <Image
+        { mediaUri ? <Image
           key={ uuid }
-          src={ mediaUri }
+          src={ imgSrc }
           alt={ `Kitty Paradise #${ id }` }
           width={ 640 }
           height={ 640 }
@@ -40,11 +43,16 @@ export default function KittyCard( props ) {
           data-forsale={ forsale }
           data-title={ `Kitty Paradise #${ id }` }
           data-description={ description }
-          onError={ handleSrcError }
+          onError={ () => handleSrcError }
         /> :
-        <div className="kitty-image-error">ipfs error - try later</div>
-      }
-
+          <Image
+            key={ uuid }
+            src={ kittyError }
+            alt={ `Kitty Paradise #${ id }` }
+            width={ 640 }
+            height={ 640 }
+          />
+        }
       <div className="kitty-meta">
         { forsale !== '0' ?
           <a href={ `https://singular.app/collectibles/${ uuid }` } target='_blank'>Buy for <span className="kitty-price">{ forsale / 0.9 / 1000000000000 } KSM</span></a>
