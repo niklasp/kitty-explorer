@@ -10,7 +10,7 @@ import { getKitties, getKittiesSorted } from '../lib/kitties'
 // import prisma from '../lib/prisma';
 
 export async function getStaticProps() {
-  const { data, forSaleCount, floorKitties } = await getKitties();
+  const { data, forSaleCount, floorKitties, timestamp } = await getKitties();
 
   return {
     props: {
@@ -18,7 +18,7 @@ export async function getStaticProps() {
       forSaleCount,
       floorKitties,
       totalCount: Object.keys(data).length,
-      timestamp: Date.now(),
+      timestamp,
     },
     revalidate: 60 * 60 * 2, // In seconds = every 2 hours
   }
