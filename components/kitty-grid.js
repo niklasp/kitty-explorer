@@ -5,14 +5,7 @@ import { customLightboxGenerator } from "../lib/yamz";
 import classNames from "classnames";
 
 export default function KittyGrid( props ) {
-  useEffect(() => {
-    const $images = [...document.querySelectorAll('[data-zoomable]')];
-    yamz.setOptions({
-      duration: 150,
-      lightboxGenerator: customLightboxGenerator,
-    });
-    yamz.bind($images);
-  }, []);
+  //TODO: add your code here for image click popup
 
   const classes = classNames(
     'kitty-grid',
@@ -20,17 +13,10 @@ export default function KittyGrid( props ) {
 
   return (
     <div className={ classes }>
-      { props.allKitties && props.allKitties.length ? props.allKitties.map( kit => {
-        return <KittyCard
-          mediaUri={ kit.metadata.mediaUri }
-          id={ kit.id }
-          key={ kit.uuid }
-          uuid={ kit.uuid }
-          forsale={ kit.forsale }
-          description={ kit.metadata.description }
-          handleClick={ () => handleClick( kit.uuid ) }
-        />
-      }) : <div>no kitties found</div> }
+      {
+        //TODO: for every kitty in the received json data, add a kitty card
+      }
+      <div>no kitties found</div>
     </div>
   );
 }

@@ -17,39 +17,27 @@ export default function KittyCard( props ) {
 
   const classes = classNames(
     'kitty-card',
-    {
-      'is-for-sale': forsale !== '0',
-    });
+  );
 
   return (
     <div className={ classes } onClick={ handleClick }>
       <div className="kitty-name">
-        { `Kitty Paradise #${ id }` }
+        {
+           // TODO: add the name of the kitty here
+        }
       </div>
       { mediaUri ?
-        <Image
-          key={ uuid }
-          src={ mediaUri }
-          alt={ `Kitty Paradise #${ id }` }
-          width={ 640 }
-          height={ 640 }
-          data-zoomable
-          data-album="kitties-album"
-          data-id={ uuid }
-          data-forsale={ forsale }
-          data-title={ `Kitty Paradise #${ id }` }
-          data-description={ description }
-          onError={ handleSrcError }
-        /> :
+        //TODO: add your code here showing the image of the NFT
+        <div>Replace this with your code</div>
+      :
         <div className="kitty-image-error">ipfs error - try later</div>
       }
 
       <div className="kitty-meta">
-        { forsale !== '0' ?
-          <a href={ `https://singular.app/collectibles/${ uuid }` } target='_blank'>Buy for <span className="kitty-price">{ forsale / 0.9 / 1000000000000 } KSM</span></a>
-        :
-          <a href={ `https://singular.app/collectibles/${ uuid }` } target='_blank'>View on Singular</a>
+        {
+          //TODO: add some meta here that will be shown on hover of the card
         }
+        Add Meta here
       </div>
     </div>
   )

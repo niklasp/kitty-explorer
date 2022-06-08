@@ -1,14 +1,11 @@
 import Head from 'next/head'
 import KittyGrid from '../components/kitty-grid';
 
-import { getKitties } from '../lib/kitties'
-
 export async function getStaticProps() {
-  const { kitties } = await getKitties();
-
   return {
     props: {
-      allKitties: kitties,
+      //TODO: add the json data as a static prop
+      allKitties: [],
     },
   }
 }
