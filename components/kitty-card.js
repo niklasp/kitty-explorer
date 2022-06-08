@@ -45,13 +45,9 @@ export default function KittyCard( props ) {
           data-description={ description }
           onError={ () => handleSrcError }
         /> :
-          <Image
-            key={ uuid }
-            src={ kittyError }
-            alt={ `Kitty Paradise #${ id }` }
-            width={ 640 }
-            height={ 640 }
-          />
+          <div className="kitty-image-error">
+            waiting for image from ipfs - check back later
+          </div> 
         }
       <div className="kitty-meta">
         { forsale !== '0' ?
