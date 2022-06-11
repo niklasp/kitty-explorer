@@ -288,6 +288,12 @@ a {
   }
 }
 
+.kitty-floor {
+  position: fixed;
+  top: 10px;
+  right: 20px;
+}
+
 .kitty-info {
   &.hidden {
     display: none;

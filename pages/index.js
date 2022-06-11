@@ -121,6 +121,7 @@ export default function Home( { allKitties, forSaleCount, totalCount, floorKitti
           floorKitties={ floorKitties }
           timestamp={ timestamp }
         />
+        <div className="kitty-floor">floor: { floorKitties && floorKitties.price / 0.9 / 1000000000000  } KSM</div>
       </main>
     </div>
   )
