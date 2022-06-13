@@ -42,11 +42,31 @@ We will use `/get_nfts_by_collection/:collection` where `:collection` is the col
 
 So the final endpoint we want to query is
 
-Currently the data source logic is in `kitties/kitties.js` where currently the dumped json file is read. Go ahead and add the following directly under the `getKitties` function definition:
+Currently the data source logic is in `lib/kitties.js`, where currently the dumped json file is read. Go ahead and add the following directly under the `getKitties` function definition:
+
+```js
+  const response = await fetch("http://138.68.123.124/get_nfts_by_collection/800f8a914281765a7d-KITTY" );
+  const jsonData = await response.json();
+```
+Also make sure to remove the `import jsonData from './kitties.json';` at the beginning of the file.
+
+We are waiting for the response of the asynchronous [`fetch`](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch) and then the `json`-Method on the result.
+
+> The Response object, in turn, does not directly contain the actual JSON response body but is instead a representation of the entire HTTP response. So, to extract the JSON body content from the Response object, we use the json() method, which returns a second promise that resolves with the result of parsing the response body text as JSON.
+
+> *https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch*
+
+Go ahead and test your frontend with `npm run dev` and watch the results.
 
 
-
-
+```js
+  let allKitties = [];
+  let forSaleCount = 0;
+  let floorKitties = {
+    kitties:[],
+    price: Number.MAX_SAFE_INTEGER,
+  };
+```
 
 
 
