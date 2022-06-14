@@ -1,15 +1,39 @@
 import Head from 'next/head'
+
+import { gql } from "@apollo/client";
+import client from "../apollo-client";
+
 import KittyGrid from '../components/kitty-grid';
 
 import { getKitties } from '../lib/kitties'
 
 export async function getStaticProps() {
-  const { kitties } = await getKitties();
+  const { data } = await client.query({
+    query: gql`
+      query {
+        nftEntities(where: {collection: {id_eq: "800f8a914281765a7d-KITTY"}}) {
+          sn
+          name
+          metadata
+          price
+          meta {
+            image
+            description
+          }
+          emotes {
+            value
+          }
+        }
+      }
+    `,
+  })
+
+  console.log( data );
 
   return {
     props: {
-      allKitties: kitties,
-    },
+      allKitties: data,
+    }
   }
 }
 
@@ -48,7 +72,7 @@ export default function Home( { allKitties } ) {
       </Head>
 
       <main>
-        <KittyGrid allKitties={ allKitties } />
+        <KittyGrid allKitties={ allKitties.nftEntities } />
       </main>
     </div>
   )

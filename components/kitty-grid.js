@@ -18,14 +18,16 @@ export default function KittyGrid( props ) {
     'kitty-grid',
   );
 
+  console.log( 'allkitties', props.allKitties );
+
   return (
     <div className={ classes }>
       { props.allKitties && props.allKitties.length ? props.allKitties.map( kit => {
         return <KittyCard
-          mediaUri={ kit.metadata.mediaUri }
-          id={ kit.id }
-          key={ kit.uuid }
-          uuid={ kit.uuid }
+          mediaUri={ kit.meta.image }
+          id={ kit.sn }
+          key={ kit.sn }
+          uuid={ kit.sn }
           forsale={ kit.forsale }
           description={ kit.metadata.description }
           handleClick={ () => handleClick( kit.uuid ) }

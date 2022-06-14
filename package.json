@@ -6,6 +6,7 @@
     "start": "next start"
   },
   "dependencies": {
+    "@apollo/client": "^3.6.8",
     "@polkadot/api": "^8.6.2",
     "classnames": "^2.3.1",
     "encoding": "^0.1.13",
