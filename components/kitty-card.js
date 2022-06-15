@@ -22,7 +22,7 @@ export default function KittyCard( props ) {
     });
 
   return (
-    <div className={ classes } onClick={ handleClick }>
+    <div className={ classes }>
       <div className="kitty-name">
         { `Kitty Paradise #${ id }` }
       </div>
