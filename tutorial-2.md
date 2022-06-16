@@ -22,7 +22,7 @@ git checkout part2-start
 
 # Getting dynamic data from an API
 
-For serverless applications in next.js we usually will not have a database backend. We could have it but it an extra step of coding not needed for this part of the tutorial.
+For serverless applications in next.js we sometimes will not have a database backend. We could have it but it is an extra step of coding not needed for this part of the tutorial.
 
 > In part 3 we will eventuall make use of a database though to store data and especially to react to new blocks and changes to the NFTs we want to monitor
 
@@ -61,17 +61,7 @@ Go ahead and test your frontend with `npm run dev` and watch the results.
 
 [image]
 
-
-```js
-  let allKitties = [];
-  let forSaleCount = 0;
-  let floorKitties = {
-    kitties:[],
-    price: Number.MAX_SAFE_INTEGER,
-  };
-```
-
-
+It should look something like the above image but probably with more kitties as [@Yumi](https://twitter.com/YumiArtsNFT) probably updated the collection already since this tutorial was written.
 
 ## Some words on API usage
 
@@ -83,10 +73,25 @@ Please keep that in mind when writing your applications and do not query too oft
 
 Everyone is able to host the docker container themselves or create other work ontop of the repo.
 
-Singular is also working on a API and eventually RMRK pallets will most probably make it obsolete because - as far as I understood - the polkadot API can then directly be queried very conveniently
+Singular is also working on a API and eventually RMRK pallets will most probably make it obsolete because - as far as I understood - the polkadot API can then directly be queried very conveniently. KodaDot also offers a free graphql endpoint to query dotsama NFTs but currently they only support RMRK1.
 
 [image api]
 
+# Sorting and Filtering
+
+The frontend looks nice already, but what is missing are functions to filter and/or sort the collection. As a user we would usually be interested in showing only kitties that are currently for sale or show the cheapest kitties first. So let's build that.
+
+
+
+# Other Metrics (floor, listed)
+```js
+  let allKitties = [];
+  let forSaleCount = 0;
+  let floorKitties = {
+    kitties:[],
+    price: Number.MAX_SAFE_INTEGER,
+  };
+```
 
 # Getting the data
 
