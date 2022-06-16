@@ -1,4 +1,5 @@
 import Head from 'next/head'
+import { orderBy } from 'lodash';
 import KittyGrid from '../components/kitty-grid';
 
 import { getKitties } from '../lib/kitties'
@@ -14,6 +15,26 @@ export async function getStaticProps() {
 }
 
 export default function Home( { allKitties } ) {
+  const getKittiesSorted = ( orderby = 'id', order='desc' ) => {
+    let sortedData;
+
+    if ( orderby === 'forsale' ) {
+      sortedData = orderBy( allKitties, item => {
+        let a = parseInt( item.forsale );
+        if ( a === 0 ) {
+          a = order === 'desc' ? -1 : Number.MAX_SAFE_INTEGER;
+        }
+        return a;
+      }, order )
+    } else {
+      sortedData = orderBy( allKitties, item => item[ orderby ], [ order ]);
+    }
+
+    return sortedData;
+  }
+
+  let shownKittes = getKittiesSorted( 'forsale', 'desc' );
+
   return (
     <div className="container">
       <Head>
@@ -48,7 +69,7 @@ export default function Home( { allKitties } ) {
       </Head>
 
       <main>
-        <KittyGrid allKitties={ allKitties } />
+        <KittyGrid allKitties={ shownKittes } />
       </main>
     </div>
   )

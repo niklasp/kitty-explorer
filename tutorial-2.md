@@ -81,6 +81,28 @@ Singular is also working on a API and eventually RMRK pallets will most probably
 
 The frontend looks nice already, but what is missing are functions to filter and/or sort the collection. As a user we would usually be interested in showing only kitties that are currently for sale or show the cheapest kitties first. So let's build that.
 
+Filtering first, as it is simpler: Add the following function to your `pages/index.js` directly below `export default function Home( { allKitties } ) {`
+
+Now sorting: Add the following function
+```js
+  const getKittiesSorted = ( orderby = 'id', order='desc' ) => {
+    let sortedData;
+
+    if ( orderby === 'forsale' ) {
+      sortedData = orderBy( allKitties, item => {
+        let a = parseInt( item.forsale );
+        if ( a === 0 ) {
+          a = order === 'desc' ? -1 : Number.MAX_SAFE_INTEGER;
+        }
+        return a;
+      }, order )
+    } else {
+      sortedData = orderBy( allKitties, item => item[ orderby ], [ order ]);
+    }
+
+    return sortedData;
+  }
+```
 
 
 # Other Metrics (floor, listed)

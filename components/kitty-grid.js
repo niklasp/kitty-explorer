@@ -5,6 +5,7 @@ import { customLightboxGenerator } from "../lib/yamz";
 import classNames from "classnames";
 
 export default function KittyGrid( props ) {
+  const { allKitties } = props;
   useEffect(() => {
     const $images = [...document.querySelectorAll('[data-zoomable]')];
     yamz.setOptions({
@@ -20,7 +21,7 @@ export default function KittyGrid( props ) {
 
   return (
     <div className={ classes }>
-      { props.allKitties && props.allKitties.length ? props.allKitties.map( kit => {
+      { allKitties && allKitties.length ? allKitties.map( kit => {
         return <KittyCard
           mediaUri={ kit.metadata.mediaUri }
           id={ kit.id }
