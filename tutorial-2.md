@@ -6,9 +6,10 @@ You are reading part 2/3 on how to create a nifty front-end for your favorite NF
 
 # In part 2 you will learn
 
-- How to query an API to retrieve updated data regularly
+- How to query an API to retrieve updated NFT data regularly
 - More about RMRK2.0 standard
-- To filter and sort the list efficiently
+- To filter and sort the kitty data efficiently
+- What part3 will bring
 
 # Prerequisites + Setting Up
 
@@ -50,13 +51,15 @@ Currently the data source logic is in `lib/kitties.js`, where currently the dump
 ```
 Also make sure to remove the `import jsonData from './kitties.json';` at the beginning of the file.
 
-We are waiting for the response of the asynchronous [`fetch`](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch) and then the `json`-Method on the result.
+We are waiting for the response of the asynchronous [`fetch`](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch) and then calling the `json`-Method on the result.
 
 > The Response object, in turn, does not directly contain the actual JSON response body but is instead a representation of the entire HTTP response. So, to extract the JSON body content from the Response object, we use the json() method, which returns a second promise that resolves with the result of parsing the response body text as JSON.
 
 > *https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch*
 
 Go ahead and test your frontend with `npm run dev` and watch the results.
+
+[image]
 
 
 ```js
