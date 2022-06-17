@@ -4,6 +4,7 @@ import KittyGrid from '../components/kitty-grid';
 
 import { getKitties, getKittiesSorted } from '../lib/kitties'
 import { useEffect, useState } from 'react';
+import KittySettings from '../components/kitty-settings';
 
 export async function getStaticProps() {
   const { kitties } = await getKitties();
@@ -36,6 +37,14 @@ export default function Home( { allKitties } ) {
     );
     console.log( 'shownkitties', shownKitties );
   }, [ kittyFilter, sort ] );
+
+  const onFilterClick = value => () => {
+    setKittyFilter( value );
+  }
+
+  const onSortClick = value => () => {
+    setSort( value );
+  }
 
   return (
     <div className="container">
@@ -72,6 +81,12 @@ export default function Home( { allKitties } ) {
 
       <main>
         <KittyGrid allKitties={ shownKitties } />
+        <KittySettings
+          sort={ sort }
+          filter={ kittyFilter }
+          onFilterClick={ onFilterClick }
+          onSortClick={ onSortClick }
+        />
       </main>
     </div>
   )
