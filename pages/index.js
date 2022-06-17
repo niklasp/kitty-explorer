@@ -2,7 +2,8 @@ import Head from 'next/head'
 import { orderBy } from 'lodash';
 import KittyGrid from '../components/kitty-grid';
 
-import { getKitties } from '../lib/kitties'
+import { getKitties, getKittiesSorted } from '../lib/kitties'
+import { useEffect, useState } from 'react';
 
 export async function getStaticProps() {
   const { kitties } = await getKitties();
@@ -15,25 +16,26 @@ export async function getStaticProps() {
 }
 
 export default function Home( { allKitties } ) {
-  const getKittiesSorted = ( orderby = 'id', order='desc' ) => {
-    let sortedData;
+  const [ isInfoHidden, setInfoHidden ] = useState( true );
+  const [ shownKitties, setShownKitties ] = useState( [] );
+  const [ sort, setSort ] = useState( {
+    sortBy: 'id',
+    sortDir: 'desc',
+  } );
+  const [ kittyFilter, setKittyFilter ] = useState( 'all' );
 
-    if ( orderby === 'forsale' ) {
-      sortedData = orderBy( allKitties, item => {
-        let a = parseInt( item.forsale );
-        if ( a === 0 ) {
-          a = order === 'desc' ? -1 : Number.MAX_SAFE_INTEGER;
-        }
-        return a;
-      }, order )
-    } else {
-      sortedData = orderBy( allKitties, item => item[ orderby ], [ order ]);
+  useEffect( () => {
+    let filteredKitties = allKitties;
+    if ( kittyFilter !== 'all' ) {
+      filteredKitties = allKitties.filter(
+        ( kit ) => parseInt( kit.forsale ) !== 0
+      );
     }
-
-    return sortedData;
-  }
-
-  let shownKittes = getKittiesSorted( 'forsale', 'desc' );
+    setShownKitties(
+      getKittiesSorted( filteredKitties, sort.sortBy, sort.sortDir )
+    );
+    console.log( 'shownkitties', shownKitties );
+  }, [ kittyFilter, sort ] );
 
   return (
     <div className="container">
@@ -69,7 +71,7 @@ export default function Home( { allKitties } ) {
       </Head>
 
       <main>
-        <KittyGrid allKitties={ shownKittes } />
+        <KittyGrid allKitties={ shownKitties } />
       </main>
     </div>
   )

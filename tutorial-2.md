@@ -81,28 +81,84 @@ Singular is also working on a API and eventually RMRK pallets will most probably
 
 The frontend looks nice already, but what is missing are functions to filter and/or sort the collection. As a user we would usually be interested in showing only kitties that are currently for sale or show the cheapest kitties first. So let's build that.
 
-Filtering first, as it is simpler: Add the following function to your `pages/index.js` directly below `export default function Home( { allKitties } ) {`
+## The functionality
 
-Now sorting: Add the following function
+Add the following code in `pages/index.js` directly below `export default function Home( { allKitties } ) {`
+
+First we will introduce 3 state variables:
 ```js
-  const getKittiesSorted = ( orderby = 'id', order='desc' ) => {
-    let sortedData;
-
-    if ( orderby === 'forsale' ) {
-      sortedData = orderBy( allKitties, item => {
-        let a = parseInt( item.forsale );
-        if ( a === 0 ) {
-          a = order === 'desc' ? -1 : Number.MAX_SAFE_INTEGER;
-        }
-        return a;
-      }, order )
-    } else {
-      sortedData = orderBy( allKitties, item => item[ orderby ], [ order ]);
-    }
-
-    return sortedData;
-  }
+  // the filtered and sorted kitties
+  const [ shownKitties, setShownKitties ] = useState( [] );
+  // the key to sort for and the direction (descending / ascending)
+  const [ sort, setSort ] = useState( {
+    sortBy: 'forsale',
+    sortDir: 'asc',
+  } );
+  // a key to filter the kitties for ('all' or 'forsale')
+  const [ kittyFilter, setKittyFilter ] = useState( 'forsale' );
 ```
+
+Then we write one [`useEffect`-function](https://reactjs.org/docs/hooks-effect.html#tip-optimizing-performance-by-skipping-effects) that will update the `shownKitties` array with the filtered and sorted data, each time either `sort` or `kittyFilter` change.
+
+```js
+  useEffect( () => {
+    let filteredKitties = allKitties;
+    if ( kittyFilter !== 'all' ) {
+      filteredKitties = allKitties.filter(
+        ( kit ) => parseInt( kit.forsale ) !== 0
+      );
+    }
+    setShownKitties(
+      getKittiesSorted( filteredKitties, sort.sortBy, sort.sortDir )
+    );
+    console.log( 'shownkitties', shownKitties );
+  }, [ kittyFilter, sort ] );
+```
+We do not directly want to transform the passed prop `allKitties` but rather keep responsibilites clean and separate by altering the `shownKitties` state variable.
+
+The `getKittiesSorted` function is not yet defined, a good place to define it is in `lib/kitties.js` where also our data fetch logic is situated. For performance and the bespoken API limitations, the aim is not to query the api again, but rather sort the data in memory. Note that this is suitable here, as the collection is < 500 items but it might totally not work for big datasets. So let's put the following at the end of `lib/kitties.js`:
+
+```js
+import { orderBy } from 'lodash';
+
+export function getKittiesSorted( kitties, orderby = 'id', order='desc' ) {
+  let sortedData;
+
+  if ( orderby === 'forsale' ) {
+    sortedData = orderBy( kitties, item => {
+      let a = parseInt( item.forsale );
+      if ( a === 0 ) {
+        a = order === 'desc' ? -1 : Number.MAX_SAFE_INTEGER;
+      }
+      return a;
+    }, order )
+  } else {
+    sortedData = orderBy( kitties, orderby, order );
+  }
+
+  return sortedData;
+}
+```
+What's going on here? It is a very general sorting function with one special case, first look at the `else` part. If we do not want to order by the `forsale` property, we just perform a [`lodash orderBy`](https://www.geeksforgeeks.org/lodash-_-orderby-method/) call, that will order the given array by the property specified in the second parameter in the direction specified in the third parameter - exactly what we needed.
+
+The `forsale` branch is passed a function as the iteratee to `orderBy` that makes sure the order is correct also for items thar are not for sale i.e. where `forsale === 0`. E.g. when ordering for sale we want the cheapest item first (`forsale > 0`), not first all items where `forsale === 0`.
+
+Now let's test the frontend and see if it works by manually changing the initial `sortBy` state values in `pages/index.js` e.g. to:
+
+
+```js
+const [ sort, setSort ] = useState( {
+  sortBy: 'forsale',
+  sortDir: 'asc',
+} );
+```
+
+Now all we have to do is wire the existing logic to UI components.
+
+## The Sorting / Filtering UI
+
+Let's write a new component for that, first the code, then the explanation.
+
 
 
 # Other Metrics (floor, listed)

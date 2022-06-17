@@ -6,6 +6,7 @@ import classNames from "classnames";
 
 export default function KittyGrid( props ) {
   const { allKitties } = props;
+  
   useEffect(() => {
     const $images = [...document.querySelectorAll('[data-zoomable]')];
     yamz.setOptions({
