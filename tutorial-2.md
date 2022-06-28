@@ -6,20 +6,27 @@ You are reading part 2/3 on how to create a nifty front-end for your favorite NF
 
 # In part 2 you will learn
 
-- How to query an API to retrieve updated NFT data regularly
-- More about RMRK2.0 standard
-- To filter and sort the kitty data efficiently
-- What part3 will bring
+- how to query an API to retrieve RMRK2 data regularly
+- to filter and sort the kitty data efficiently
+- to write a react filtering + sorting component
+
+You will need 30-60min depending on your knowledge to follow along
 
 # Prerequisites + Setting Up
+Basic understanding of
+- react
+- javascript
+- css
+- html
+- git
 
+If you have not already, clone the directory, or pull the latest changes, then checkout the `part2` branch, it includes all the code needed here so you can follow along easily. If you want no code and write / copy everything yourself, checkout the `part1-complete` branch and go from there.
 ```
 git pull
 # or git clone git@github.com:niklasp/kitty-explorer.git
-git checkout part2-start 
-# git checkout part2-complete -- if you do not want to write code
+git checkout part2
 ```
-
+>*As a task you can always try with a different collection and maybe change the styling that it fits the new collection.*
 # Getting dynamic data from an API
 
 For serverless applications in next.js we sometimes will not have a database backend. We could have it but it is an extra step of coding not needed for this part of the tutorial.
@@ -69,11 +76,22 @@ The provided API is self hosted and there is a query limit of 20 queries per min
 
 For NFTs, blockchain indexing will also require fetching lots of data from IPFS services. While a very trimmed down version of the nft metadata is stored onchain, many metadata is hidden behind another ipfs query for the full nft metadata (e.g.full history: sales, listings) as json.
 
-Please keep that in mind when writing your applications and do not query too often, we will show below how we only query the API every 4 hours with next build in SSG revalidation.
+Please keep that in mind when writing your applications and do not query too often, we will show below how we only query the API every 4 hours with next build in [SSG revalidation](https://nextjs.org/docs/basic-features/data-fetching/incremental-static-regeneration).
 
-Everyone is able to host the docker container themselves or create other work ontop of the repo.
+Nextjs offers a handy way of polling services in a frequency you can define. We are using the `getStaticProps` function on our main page. It is called at build time on the server side, if however you also supply the [`revalidate`](https://nextjs.org/docs/basic-features/data-fetching/incremental-static-regeneration) property, the function will be called again if the specified time passed and a new request comes in. 
 
-Singular is also working on a API and eventually RMRK pallets will most probably make it obsolete because - as far as I understood - the polkadot API can then directly be queried very conveniently. KodaDot also offers a free graphql endpoint to query dotsama NFTs but currently they only support RMRK1.
+In `pages/index.js` make `getStaticProps` return the following, so that it now calls the function again every 4 hours.
+
+```js
+  return {
+    props: {
+      allKitties: kitties,
+    },
+    revalidate: 60 * 60 * 4, //in seconds
+  }
+```
+
+> *Singular is also working on a API and eventually RMRK pallets will most probably make it obsolete because - as far as I understood - the polkadot API can then directly be queried very conveniently. KodaDot also offers a free graphql endpoint to query dotsama NFTs but currently they only support RMRK1.*
 
 [image api]
 
@@ -155,257 +173,99 @@ const [ sort, setSort ] = useState( {
 
 Now all we have to do is wire the existing logic to UI components.
 
+> *If you notice some kitties being doubled, it can be because we are not filtering `burned` kitties. Filtering those is left as a challenge to you, just look at the `burned` property returned from the API*
+
 ## The Sorting / Filtering UI
 
-Let's write a new component for that, first the code, then the explanation.
-
-
-
-# Other Metrics (floor, listed)
-```js
-  let allKitties = [];
-  let forSaleCount = 0;
-  let floorKitties = {
-    kitties:[],
-    price: Number.MAX_SAFE_INTEGER,
-  };
-```
-
-# Getting the data
-
-The process of getting RMRK NFT data from Kusama consists of the following steps
-
-```
-1. Query some blockchain rpc endpoint for Remarks (RMRK Extrinsic) ->
-2. Consolidate those Remarks to get contained JSON Data
-3. Filter that JSON data for the collection you want
-4. (listen to new blocks and start with 1.)
-```
-
-Luckily we do not have to do all of this (right now - will do in part 3), but there is up to date downloads downloads available for step 1 and step 2, and a handy unofficial API for step3. We will now use that API to get JSON data from the collection we want to query.
-
-```
-http://138.68.123.124/get_nfts_by_collection/800f8a914281765a7d-KITTY
-```
-
-In the repo you can already find an (outdated) dump of the collection in `lib/kitties.json`. Either work with that or download a new dump by overriding that file with the one from the API.
-
-[ IMAGE from the json dump ]
-
-|| Note for later that the metadata we get is a string, so we will have to parse it to json to work with it later.
-
-If you want more information and try out consolidating your own blockchain dumps, read on here.
-
-Now that you have the data in your app, let's go and display it
-
-# Writing the controller
-
-We start by writing a controller that will provide the application with the data we want (later we can reuse the code for blockchain queries). Open the file `lib/kitties.js`.
+Let's write a new component for that, first the code, then the explanation. File is `components/kitty-stetings.js`.
 
 ```js
-import { orderBy } from "lodash";
-import jsonData from './kitties.json';
+import classNames from 'classnames';
+import { useState } from 'react'
 
-export async function getKitties() {
+export default function KittySettings( props ) {
+  const [ orderBy ] = useState( [ 'desc', 'asc' ] );
 
-  // transform the data we get from the json to a format we want
-  const realKittyData = jsonData.map( ( kitObj ) => {
-    // ...
-  });
-
-  // sort the data by id desc
-  const sortedData = orderBy( realKittyData, item => item[ 'id' ], [ 'desc' ]);
-
-  return {
-    kitties: sortedData,
-  };
-}
-
-```
-First, we need to transform the data, that is a step of great importance, not only in this app but usually you would want to reformat the data by either renaming, aggregating or laying out the received data differently unless the API is really perfect :)
-
-We are adding a simple `id` field e.g. as you maybe saw from the json dump the fields we get for each NFT are soething like
-```json
-...
-id: "12125948-800f8a914281765a7d-KITTY-KITTY_PARADISE_40-00000040",
-symbol: "KITTY_PARADISE_40",
-...
-```
-While for the frontend we would just rather need the id `40` in this case. Still we are keeping the id in a new `uuid` field, as we will need that for the URI of the NFT on singular.app.
-
-Finally the data is sorted descending by `id` using lodash's [orderby function](https://lodash.com/docs/4.17.15#orderBy) (also see [iteratee doc](https://lodash.com/docs/4.17.15#iteratee)) - no need to reinvent the wheel here, just make use of all those handy npm packages around. In Part 2 you will see different orders implemented (price e.g.).
-
-# Leveraging Static Site Generation
-
-We will use next.js `Static Site Generation` that will pregenerate sites generate a site on build-time of the app. That way the site loads lightning fast and the API is not queried on every page load but cached by nextjs.
-
-> How does it work? Well, in Next.js, when you export a page component, you can also export an async function called `getStaticProps`. If you do this, then:
-> - getStaticProps runs at build time in production, and…
->  - Inside the function, you can fetch external data and send it as props to the page.
-> 
-> ([https://nextjs.org/learn/basics/data-fetching/with-data](https://nextjs.org/learn/basics/data-fetching/with-data))
-
-So on our `pages/index.js` page we want to define the `async` `getStaticProps` function that gets the controllers `kitties` data and provides it to the Static site generator.
-
-```js
-import { getKitties } from '../lib/kitties'
-
-export async function getStaticProps() {
-  const { kitties } = await getKitties();
-
-  return {
-    props: {
-      allKitties: kitties,
-    },
-  }
-}
-```
-
-By returning `allKitties` inside the props object in getStaticProps, the kitties from the jsonDump (later from the API) will be passed to the Home component as a prop. Now you can access the kitties on that page like so:
-
-```
-export default function Home( { allKitties } ) { ... }
-```
-
-# Writing the `KittyCard` and `KittyGrid` components
-
-Now that we have the data on the page, we can write two [react components](https://reactjs.org/docs/components-and-props.html) to actually display them.
-- `KittyCard` will display a single kitty image along with a name and a link to the singular NFT. It will also provide the DOM needed to render the popups that happen when the users click on the kitty.
-- `KittyGrid` is basically a wrapper for all the kitties, providing css classes for styling and can later handle detail data fetching when single kitties are clicked. It will display a error message if no kitties are found / supplied from page props.
-
-Let's start with `KittyGrid` in `components/kitty-grid.js`
-```js
-export default function KittyGrid( props ) {
-  ...
-
-  return (
-    <div className={ classes }>
-      { props.allKitties && props.allKitties.length ? props.allKitties.map( kit => {
-        return <KittyCard
-          mediaUri={ kit.metadata.mediaUri }
-          id={ kit.id }
-          key={ kit.uuid }
-          uuid={ kit.uuid }
-          forsale={ kit.forsale }
-          description={ kit.metadata.description }
-        />
-      }) : <div>no kitties found</div> }
+  return(
+    <div className="kitty-settings">
+      <div className="backdrop"></div>
+      <div className="kitty-filter">show:
+        <a
+          className={ classNames( 'filter', { active: props.filter === 'all' } ) }
+          onClick={ props.onFilterClick( 'all' ) }
+        >
+          all
+        </a>
+        <a
+        className={ classNames( 'filter', { active: props.filter === 'forsale' } ) }
+          onClick={ props.onFilterClick( 'forsale' ) }
+        >
+          forsale
+        </a>
+      </div>
+      <div className="kitty-sort">
+        sort:
+        <a
+          className={ classNames( 'sort-by', { active: props.sort.sortBy === 'id' } ) }
+          onClick={ props.onSortClick( {
+            sortBy: 'id',
+            sortDir: props.sort.sortDir === 'asc' ? 'desc' : 'asc',
+          } )}
+        >
+          id
+          <span className="descasc">
+            { props.sort.sortDir === 'asc' ? '↑' : '↓'}
+          </span>
+        </a>
+        <a
+        className={ classNames( 'sort-by', { active: props.sort.sortBy === 'forsale' } ) } 
+          onClick={ props.onSortClick( {
+            sortBy: 'forsale',
+            sortDir: props.sort.sortDir === 'asc' ? 'desc' : 'asc',
+          } )}
+        >
+          price
+          <span className="descasc">
+            { props.sort.sortDir === 'asc' ? '↑' : '↓'}
+          </span>
+        </a>
+      </div>
+      <div className="kitty-filters"></div>
     </div>
   );
-
-  ...
 }
 ```
-It checks if `allKitties` were provided in the component props and `maps` over them to display a single `<KittyCard>` component for each `kit`, passing down the needed props.
 
-The `KittyCard` component will then render all the passed props to an nextjs `<Image>`.
+No magic again, basically we are creating 4 clickable dom `<a>`-elements that will call functions that were passed by the parent element via props. We will not write the logic in this component as the sort-order and filter might also be relevant for other metrics later, so it is placed in the parent.
+
+Now all that needs to be done is to put a `<KittySettings>` component to our `page/index.js` page. Put the following in the `<main>` part of the DOM.
 
 ```js
-export default function KittyCard( props ) {
-  const {
-    id,
-    uuid,
-    mediaUri,
-    forsale,
-    description,
-    handleClick,
-  } = props;
+<KittySettings
+  sort={ sort }
+  filter={ kittyFilter }
+  onFilterClick={ onFilterClick }
+  onSortClick={ onSortClick }
+/>
+```
+Also define the functions above:
 
-  ...
+```js
+const onFilterClick = value => () => {
+  setKittyFilter( value );
+}
 
-  return (
-    <div className={ classes }>
-      <div className="kitty-name">
-        { `Kitty Paradise #${ id }` }
-      </div>
-      { mediaUri ?
-        <Image
-          key={ uuid }
-          src={ mediaUri }
-          alt={ `Kitty Paradise #${ id }` }
-          width={ 640 }
-          height={ 640 }
-          data-zoomable
-          data-album="kitties-album"
-          data-id={ uuid }
-          data-forsale={ forsale }
-          data-title={ `Kitty Paradise #${ id }` }
-          data-description={ description }
-          onError={ handleSrcError }
-        /> :
-        <div className="kitty-image-error">ipfs error - try later</div>
-      }
-      <div className="kitty-meta">
-        { forsale !== '0' ?
-          <a
-            href={ `https://singular.app/collectibles/${ uuid }` }
-            target='_blank'
-          >
-            Buy for 
-            <span className="kitty-price">
-              { forsale / 0.9 / 1000000000000 } KSM
-            </span>
-          </a>
-        :
-          <a
-            href={ `https://singular.app/collectibles/${ uuid }` }
-            target='_blank'
-          >
-            View on Singular
-          </a>
-        }
-      </div>
-    </div>
-  )
+const onSortClick = value => () => {
+  setSort( value );
 }
 ```
-It seems a lot of code, but it is basically the [next.js `<Image>`](https://nextjs.org/docs/basic-features/image-optimization#remote-images) component. It is an optimized `<img>` with lazy loading and other performance optimizations applied.
+The functions are calling the `set`-methods of the state variables. Notice that both functions are returning functions not values. 
 
-Also note the `data-` attributes. They are needed for the zoom-plugin you will learn about in the next chapter. The `kitty-name` and `kitty-meta` divs are hidden by default and only shown on hover. 
-
-In `kitty-meta`, you see a condition that checks if `forsale !== '0'`. Remeber the data from the json dump? There is no boolean attribute we could use as a value but rather the `forsale` attribute has the value `0` when an NFT is not for sale. Second caveat, the `forsale` attribute does not store the price you can purchase the NFT for, but rather the price, the seller will get. The difference is the creator royalities, that means, if it is for sale, the price can be calculated with
-```
-price = forsale / ( 1 - royalities for the collection in % ) / 1000000000000
-```
-So, in both cases - for sale and not for sale - we add a link to singular. But in case it is for sale, also the price one has to pay is displayed.
-
-## Adding Style
-
-
-Now all we have to do is to add the required css. For simplicity all styles are globally added in `styles/app.scss` which is included into all pages via the [`pages/_app.js`](https://nextjs.org/learn/basics/assets-metadata-css/global-styles) file. We leave it as a challenge to the readers to use [`Layout Components`](https://nextjs.org/learn/basics/assets-metadata-css/layout-component) or any other style option available to react.
-
-# The Zoom UX
-
-For the website the idea is not only to see all the NFT artwork in overview but also to focus on one, and to zoom it in and see it larger.
-
-There are many image zoom plugins or lightbox plugins around. Personally I tend to use [`medium-zoom`](https://github.com/francoischalifour/medium-zoom), but it has it's difficulties with absolute positioned elements the next.js `<Image>` component adds to the dom. So I found [`yet another medium zoom` (yamz)](https://github.com/birjj/yet-another-medium-zoom) which solves the task flawlessly and on top provides options for manipulating the zoomed DOM. That way we can also add some more details next to the zoomed kitty
-
-The initialization logic of yamz is located in a `useEffect` hook that will fire when the component is rendered.
-
-```js
-  useEffect(() => {
-    const $images = [...document.querySelectorAll('[data-zoomable]')];
-    yamz.setOptions({
-      duration: 150,
-      lightboxGenerator: customLightboxGenerator,
-    });
-    yamz.bind($images);
-  }, []);
-```
-
-Basically it is creating the zoom logic for all `$images` and adding the `customLightboxGenerator` which is imported from `lib/yamz.js`. The generator is basically the one from the [github example of yamz](https://github.com/birjj/yet-another-medium-zoom/blob/master/website/js/index.ts) with some adaptions and css styles added.
-
-# Publishing the app
-
-On [vercel](https://vercel.com/new), you can get most of the hosting features for your next.js app for free.
-
-[image here]
-
-Just hit "New Project", then connect your github account. And when you push any branch, vercel will automatically generate a build and host it on a specified domain you see in the UI.
+We will not go over the styles / css, if you checked out the part2 branch you will already have them, if not, have a look in the [repository](https://github.com/niklasp/kitty-explorer).
 
 # Final Thoughts
 
-Thank you for reading this far. And looking forward to part 2 + 3 with more blockchain interaction.
+Thank you for reading this far. And looking forward to part 3 which will teach you how to mirror realtime updates coming from more blockchain, i.e. sales, listings, mints
 
 Follow me on twitter for more #dotsama related things: [@niftesty](https://twitter.com/niftesty)
 

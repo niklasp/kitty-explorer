@@ -13,6 +13,7 @@ export async function getStaticProps() {
     props: {
       allKitties: kitties,
     },
+    revalidate: 60 * 60 * 4, //in seconds
   }
 }
 
